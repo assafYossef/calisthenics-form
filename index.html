@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תוכנית אימונים - קליסטניקס</title>
     <style>
-        /* Modern, Dark Athletic Theme */
+        /* Extracted Theme */
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --accent: #ff4757;
-            --accent-hover: #ff6b81;
-            --input-bg: #2d2d2d;
-            --border-radius: 12px;
+            --bg-color: #242424;          
+            --card-bg: #1c1c1c;           
+            --text-main: #ffffff;         
+            --text-muted: #9e9e9e;        
+            --accent-blue: #5c8ab8;       
+            --accent-blue-hover: #6a9ccf; 
+            --accent-yellow: #dceb2a;     
+            --accent-yellow-hover: #eaf745;
+            --input-bg: #2b2b2b;          
+            --border-radius: 8px;
         }
 
         body {
@@ -28,7 +30,63 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            background: radial-gradient(circle at center, #333333 0%, #1a1a1a 100%);
+            /* Prevent scrolling while splash screen is active */
+            overflow: hidden; 
         }
+
+        /* --- NEW: Splash Screen Animation --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111111; /* Deep dark background for the intro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            /* The splash screen stays for 2.2s, then slides up taking 0.8s */
+            animation: slideUpOut 0.8s cubic-bezier(0.8, 0, 0.2, 1) 2.2s forwards;
+        }
+
+        .splash-logo {
+            width: 180px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            /* Logo fades in and scales slightly */
+            animation: logoPulseReveal 1.8s ease-out forwards;
+        }
+
+        @keyframes logoPulseReveal {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUpOut {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        /* ----------------------------------- */
 
         .container {
             background-color: var(--card-bg);
@@ -36,8 +94,9 @@
             max-width: 500px;
             padding: 40px;
             border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             position: relative;
+            border: 1px solid #333;
         }
 
         /* Navigation Controls */
@@ -92,9 +151,10 @@
 
         .progress-fill {
             height: 100%;
-            background-color: var(--accent);
+            background-color: var(--accent-yellow);
             width: 0%;
             transition: width 0.4s ease;
+            box-shadow: 0 0 10px rgba(220, 235, 42, 0.4); 
         }
 
         /* Typography */
@@ -103,6 +163,8 @@
             margin-bottom: 25px;
             font-size: 1.4rem;
             line-height: 1.4;
+            font-weight: 700;
+            color: var(--accent-blue); 
         }
 
         p.subtitle {
@@ -113,7 +175,7 @@
 
         .question-subtext {
             font-size: 0.9rem;
-            color: var(--accent);
+            color: var(--text-muted);
             display: block;
             margin-top: 5px;
             font-weight: normal;
@@ -123,7 +185,7 @@
         .options-grid {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .option-btn {
@@ -131,7 +193,7 @@
             color: var(--text-main);
             border: 2px solid transparent;
             padding: 16px 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
             text-align: right;
             cursor: pointer;
@@ -140,19 +202,46 @@
         }
 
         .option-btn:hover {
-            border-color: var(--accent);
-            background-color: #383838;
+            border-color: var(--accent-blue);
+            background-color: #333;
         }
 
         .option-btn.selected {
-            background-color: var(--accent);
-            border-color: var(--accent);
-            color: white;
-            font-weight: 600;
+            background-color: var(--accent-yellow);
+            border-color: var(--accent-yellow);
+            color: #000000; 
+            font-weight: bold;
         }
 
         .option-btn.selected:hover {
-            background-color: var(--accent-hover);
+            background-color: var(--accent-yellow-hover);
+        }
+
+        /* Next Button */
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent-blue);
+            color: #ffffff; 
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+            font-family: inherit;
+            margin-top: 25px;
+        }
+
+        .next-btn:hover:not(:disabled) {
+            background-color: var(--accent-blue-hover);
+        }
+
+        .next-btn:disabled {
+            background-color: #2b2b2b;
+            color: #555555;
+            cursor: not-allowed;
+            border: 1px solid #444;
         }
 
         /* Lead Capture Form */
@@ -171,7 +260,7 @@
             background-color: var(--input-bg);
             border: 1px solid #444;
             color: var(--text-main);
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
             box-sizing: border-box;
             transition: border-color 0.2s;
@@ -180,16 +269,16 @@
 
         .input-group input:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--accent-blue);
         }
 
         /* Validation Error Styles */
         .input-group input.invalid {
-            border-color: var(--accent);
+            border-color: #ff4757; 
         }
 
         .error-message {
-            color: var(--accent);
+            color: #ff4757; 
             font-size: 0.85rem;
             margin-top: 6px;
             display: none;
@@ -199,10 +288,10 @@
         .submit-btn {
             width: 100%;
             padding: 16px;
-            background-color: var(--accent);
-            color: white;
+            background-color: var(--accent-blue);
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
@@ -211,13 +300,15 @@
             margin-top: 10px;
         }
 
-        .submit-btn:hover {
-            background-color: var(--accent-hover);
+        .submit-btn:hover:not(:disabled) {
+            background-color: var(--accent-blue-hover);
         }
         
         .submit-btn:disabled {
-            background-color: #555;
+            background-color: #2b2b2b;
+            color: #555555;
             cursor: not-allowed;
+            border: 1px solid #444;
         }
 
         /* Success Modal Styles */
@@ -227,8 +318,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -252,7 +343,8 @@
             width: 90%;
             transform: translateY(20px);
             transition: transform 0.3s ease;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            border: 1px solid #333;
         }
 
         .modal-overlay.active .modal-content {
@@ -262,8 +354,8 @@
         .modal-icon {
             width: 64px;
             height: 64px;
-            background-color: rgba(255, 71, 87, 0.1);
-            color: var(--accent);
+            background-color: var(--accent-yellow);
+            color: #000000;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -281,8 +373,8 @@
             padding: 12px 30px;
             background-color: transparent;
             color: var(--text-main);
-            border: 1px solid #444;
-            border-radius: 8px;
+            border: 1px solid #555;
+            border-radius: var(--border-radius);
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
@@ -296,6 +388,11 @@
     </style>
 </head>
 <body>
+
+    <!-- NEW: Splash Screen Overlay -->
+    <div id="splash-screen" class="splash-screen">
+        <img src="logo.png" alt="Logo" class="splash-logo">
+    </div>
 
     <div class="container">
         <!-- Back Button Area -->
@@ -313,7 +410,6 @@
         <div id="progress-container">
             <div class="progress-header">
                 <span id="progress-text">שאלה 1 מתוך 7</span>
-                <span id="remaining-text">עוד 6</span>
             </div>
             <div class="progress-track">
                 <div class="progress-fill" id="progress-fill"></div>
@@ -326,6 +422,8 @@
             <div class="options-grid" id="options-container">
                 <!-- Buttons injected via JavaScript -->
             </div>
+            <!-- Next Button -->
+            <button id="next-btn" class="next-btn" onclick="goToNextQuestion()" disabled>המשך</button>
         </div>
 
         <!-- Lead Capture Form -->
@@ -364,6 +462,17 @@
     </div>
 
     <script>
+        // --- NEW: Remove Splash Screen After Animation ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if(splash) {
+                    splash.remove(); // Removes it from DOM so it doesn't block clicks
+                }
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }, 3000); // 3 seconds matches the animation durations perfectly
+        });
+
         const questions = [
             { 
                 q: "1. מה המטרה העיקרית שלך בקליסטניקס? <span class='question-subtext'>(ניתן לבחור יותר מאפשרות אחת)</span>", 
@@ -437,24 +546,21 @@
         let currentIndex = 0;
         const totalQuestions = questions.length;
         let userAnswers = {}; 
-        let autoAdvanceTimer = null;
 
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
         const progressText = document.getElementById('progress-text');
-        const remainingText = document.getElementById('remaining-text');
         const progressFill = document.getElementById('progress-fill');
         const quizSection = document.getElementById('quiz-section');
         const leadForm = document.getElementById('lead-form');
         const progressContainer = document.getElementById('progress-container');
         const backBtn = document.getElementById('back-btn');
+        const nextBtn = document.getElementById('next-btn');
         
         const modalOverlay = document.getElementById('success-modal');
         const modalMessage = document.getElementById('modal-message');
 
         function renderQuestion() {
-            clearTimeout(autoAdvanceTimer); 
-
             const currentQ = questions[currentIndex];
             questionText.innerHTML = currentQ.q; 
             optionsContainer.innerHTML = '';
@@ -476,6 +582,7 @@
 
             updateProgress();
             updateBackButton();
+            updateNextButton(); 
         }
 
         function handleAnswer(selectedOption, btnElement) {
@@ -505,12 +612,17 @@
                 btnElement.classList.add('selected');
             }
             
-            clearTimeout(autoAdvanceTimer);
+            updateNextButton(); 
+        }
 
-            if (selections.length > 0) {
-                autoAdvanceTimer = setTimeout(() => {
-                    goToNextQuestion();
-                }, 1000);
+        function updateNextButton() {
+            const selections = userAnswers[currentIndex] || [];
+            nextBtn.disabled = selections.length === 0;
+
+            if (currentIndex === totalQuestions - 1) {
+                nextBtn.innerText = "לשלב הסופי";
+            } else {
+                nextBtn.innerText = "המשך";
             }
         }
 
@@ -524,7 +636,6 @@
         }
 
         function goBack() {
-            clearTimeout(autoAdvanceTimer); 
             if (currentIndex > 0) {
                 currentIndex--;
                 renderQuestion();
@@ -537,11 +648,7 @@
 
         function updateProgress() {
             const currentQuestionNum = currentIndex + 1;
-            const remaining = totalQuestions - currentQuestionNum;
-            
             progressText.innerText = `שאלה ${currentQuestionNum} מתוך ${totalQuestions}`;
-            remainingText.innerText = remaining === 0 ? "שאלה אחרונה!" : `עוד ${remaining}`;
-            
             const percentage = (currentIndex / totalQuestions) * 100;
             progressFill.style.width = `${percentage}%`;
         }
@@ -566,26 +673,21 @@
             modalOverlay.classList.remove('active');
         }
 
-        // Validation Regex Functions
         function isValidName(name) {
-            // Allows Hebrew letters, English letters, and spaces. Minimum 2 characters.
             const nameRegex = /^[a-zA-Zא-ת\s]{2,}$/;
             return nameRegex.test(name.trim());
         }
 
         function isValidEmail(email) {
-            // Standard email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email.trim());
         }
 
         function isValidPhone(phone) {
-            // Israeli Mobile Phone validation: starts with 05, optional dash, then 7 digits.
             const phoneRegex = /^05\d-?\d{7}$/;
             return phoneRegex.test(phone.trim());
         }
 
-        // Show/Clear errors in the UI
         function showError(fieldId) {
             document.getElementById(fieldId).classList.add('invalid');
             document.getElementById(`${fieldId}-error`).style.display = 'block';
@@ -604,7 +706,6 @@
 
             let isValid = true;
 
-            // Run validations
             if (!isValidName(name)) {
                 showError('name');
                 isValid = false;
@@ -618,10 +719,8 @@
                 isValid = false;
             }
 
-            // If any validation failed, stop the submission
             if (!isValid) return;
 
-            // If valid, proceed with submission
             submitBtn.disabled = true;
             submitBtn.innerText = "שולח...";
 
