@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תוכנית אימונים - קליסטניקס</title>
+    <style>
+        /* Modern, Dark Athletic Theme */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent: #ff4757;
+            --accent-hover: #ff6b81;
+            --input-bg: #2d2d2d;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* Navigation Controls */
+        .nav-header {
+            height: 24px;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0;
+            transition: color 0.2s;
+            font-family: inherit;
+            visibility: hidden;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            transform: scaleX(-1);
+        }
+
+        /* Progress Bar Styles */
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Typography */
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            line-height: 1.4;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .question-subtext {
+            font-size: 0.9rem;
+            color: var(--accent);
+            display: block;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+
+        /* Question Options */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 2px solid transparent;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+            background-color: #383838;
+        }
+
+        .option-btn.selected {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .option-btn.selected:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Lead Capture Form */
+        #lead-form {
+            display: none;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--input-bg);
+            border: 1px solid #444;
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Validation Error Styles */
+        .input-group input.invalid {
+            border-color: var(--accent);
+        }
+
+        .error-message {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            text-align: right;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        /* Success Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(255, 71, 87, 0.1);
+            color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .modal-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal-btn {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .close-modal-btn:hover {
+            background-color: #333;
+            border-color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Back Button Area -->
+        <div class="nav-header">
+            <button id="back-btn" class="back-btn" onclick="goBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                חזור
+            </button>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div id="progress-container">
+            <div class="progress-header">
+                <span id="progress-text">שאלה 1 מתוך 7</span>
+                <span id="remaining-text">עוד 6</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div id="quiz-section">
+            <h2 id="question-text">טוען שאלה...</h2>
+            <div class="options-grid" id="options-container">
+                <!-- Buttons injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Lead Capture Form -->
+        <div id="lead-form">
+            <h2>הכל מוכן!</h2>
+            <p class="subtitle">השאר את הפרטים שלך למטה והמאמן הראשי שלנו יחזור אליך כדי לבנות את התוכנית המותאמת אישית שלך.</p>
+            
+            <div class="input-group">
+                <input type="text" id="name" placeholder="שם מלא" oninput="clearError('name')">
+                <div id="name-error" class="error-message">אנא הזן שם תקין (לפחות 2 אותיות).</div>
+            </div>
+            <div class="input-group">
+                <input type="email" id="email" placeholder="כתובת אימייל" oninput="clearError('email')" dir="ltr" style="text-align: right;">
+                <div id="email-error" class="error-message">אנא הזן כתובת אימייל תקינה.</div>
+            </div>
+            <div class="input-group">
+                <input type="tel" id="phone" placeholder="מספר טלפון (נייד)" oninput="clearError('phone')" dir="ltr" style="text-align: right;">
+                <div id="phone-error" class="error-message">אנא הזן מספר נייד תקין (לדוגמה: 0501234567).</div>
+            </div>
+            <button id="submit-button" class="submit-btn" onclick="submitForm()">שלח וקבל תוכנית</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>הפרטים נשמרו בהצלחה!</h2>
+            <p id="modal-message" class="subtitle">תודה! התשובות שלך התקבלו והצוות שלנו יצור איתך קשר בקרוב.</p>
+            <button class="close-modal-btn" onclick="closeModal()">הבנתי, תודה</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                q: "1. מה המטרה העיקרית שלך בקליסטניקס? <span class='question-subtext'>(ניתן לבחור יותר מאפשרות אחת)</span>", 
+                options: [
+                    "א. לבנות גוף חזק וחטוב", 
+                    "ב. ללמוד סקילים כמו עליית כוח, פלאנץ' ופרונט לבר", 
+                    "ג. להתחזק במשקל גוף ולהשתפר בכל התרגילים", 
+                    "ד. להתחיל להתאמן בצורה נכונה ולהתמיד"
+                ],
+                multiSelect: true
+            },
+            { 
+                q: "2. איפה אתה נמצא היום?", 
+                options: [
+                    "א. אני רק מתחיל", 
+                    "ב. אני כבר מתאמן אבל בלי תוכנית מסודרת", 
+                    "ג. אני מתאמן באופן קבוע ורוצה לקחת את עצמי לרמה הבאה"
+                ],
+                multiSelect: false
+            },
+            { 
+                q: "3. מה הכי מתאר את רמת הקליסטניקס שלך?", 
+                options: [
+                    "א. עדיין לא מצליח מתח או מקבילים", 
+                    "ב. מצליח מתח ומקבילים ורוצה להתחזק", 
+                    "ג. כבר עובד על סקילים מתקדמים"
+                ],
+                multiSelect: false
+            },
+            { 
+                q: "4. מה הכי עוצר אותך מלהתקדם? <span class='question-subtext'>(ניתן לבחור יותר מאפשרות אחת)</span>", 
+                options: [
+                    "א. אני לא יודע אילו תרגילים לעשות כדי להתקדם", 
+                    "ב. אני מתאמן אבל לא רואה התקדמות", 
+                    "ג. קשה לי להתמיד לבד", 
+                    "ד. אני מפחד להיפצע או לבצע תרגילים לא נכון"
+                ],
+                multiSelect: true
+            },
+            { 
+                q: "5. מה הכי היית רוצה להצליח לעשות? <span class='question-subtext'>(ניתן לבחור יותר מאפשרות אחת)</span>", 
+                options: [
+                    "א. עליית כוח (Muscle-Up)", 
+                    "ב. פלאנץ' (Planche)", 
+                    "ג. פרונט לבר (Front Lever)", 
+                    "ד. עמידת ידיים (Handstand)"
+                ],
+                multiSelect: true
+            },
+            { 
+                q: "6. תוך כמה זמן היית רוצה לראות שינוי משמעותי?", 
+                options: [
+                    "א. תוך 3 חודשים", 
+                    "ב. תוך 3–6 חודשים", 
+                    "ג. תוך 6–12 חודשים", 
+                    "ד. אין לי דדליין, אני פשוט רוצה להתחיל"
+                ],
+                multiSelect: false
+            },
+            { 
+                q: "7. עד כמה אתה רציני לגבי המטרה שלך?", 
+                options: [
+                    "א. 🔥 10/10 – אני מוכן לתת את כל מה שצריך", 
+                    "ב. אני רציני ורוצה להתחייב לתהליך", 
+                    "ג. אני רק בודק אפשרויות כרגע"
+                ],
+                multiSelect: false
+            }
+        ];
+
+        let currentIndex = 0;
+        const totalQuestions = questions.length;
+        let userAnswers = {}; 
+        let autoAdvanceTimer = null;
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const remainingText = document.getElementById('remaining-text');
+        const progressFill = document.getElementById('progress-fill');
+        const quizSection = document.getElementById('quiz-section');
+        const leadForm = document.getElementById('lead-form');
+        const progressContainer = document.getElementById('progress-container');
+        const backBtn = document.getElementById('back-btn');
+        
+        const modalOverlay = document.getElementById('success-modal');
+        const modalMessage = document.getElementById('modal-message');
+
+        function renderQuestion() {
+            clearTimeout(autoAdvanceTimer); 
+
+            const currentQ = questions[currentIndex];
+            questionText.innerHTML = currentQ.q; 
+            optionsContainer.innerHTML = '';
+
+            const currentSelections = userAnswers[currentIndex] || [];
+
+            currentQ.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                
+                if (currentSelections.includes(option)) {
+                    button.classList.add('selected');
+                }
+                
+                button.innerText = option;
+                button.onclick = () => handleAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+
+            updateProgress();
+            updateBackButton();
+        }
+
+        function handleAnswer(selectedOption, btnElement) {
+            if (!userAnswers[currentIndex]) {
+                userAnswers[currentIndex] = [];
+            }
+
+            const isMultiSelect = questions[currentIndex].multiSelect;
+            const selections = userAnswers[currentIndex];
+            
+            if (isMultiSelect) {
+                const optionIndex = selections.indexOf(selectedOption);
+                if (optionIndex > -1) {
+                    selections.splice(optionIndex, 1);
+                    btnElement.classList.remove('selected');
+                } else {
+                    selections.push(selectedOption);
+                    btnElement.classList.add('selected');
+                }
+            } else {
+                selections.length = 0; 
+                selections.push(selectedOption);
+
+                const allButtons = optionsContainer.querySelectorAll('.option-btn');
+                allButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                btnElement.classList.add('selected');
+            }
+            
+            clearTimeout(autoAdvanceTimer);
+
+            if (selections.length > 0) {
+                autoAdvanceTimer = setTimeout(() => {
+                    goToNextQuestion();
+                }, 1000);
+            }
+        }
+
+        function goToNextQuestion() {
+            currentIndex++;
+            if (currentIndex < totalQuestions) {
+                renderQuestion();
+            } else {
+                showLeadForm();
+            }
+        }
+
+        function goBack() {
+            clearTimeout(autoAdvanceTimer); 
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function updateBackButton() {
+            backBtn.style.visibility = (currentIndex === 0) ? 'hidden' : 'visible';
+        }
+
+        function updateProgress() {
+            const currentQuestionNum = currentIndex + 1;
+            const remaining = totalQuestions - currentQuestionNum;
+            
+            progressText.innerText = `שאלה ${currentQuestionNum} מתוך ${totalQuestions}`;
+            remainingText.innerText = remaining === 0 ? "שאלה אחרונה!" : `עוד ${remaining}`;
+            
+            const percentage = (currentIndex / totalQuestions) * 100;
+            progressFill.style.width = `${percentage}%`;
+        }
+
+        function showLeadForm() {
+            quizSection.style.display = 'none';
+            backBtn.style.display = 'none'; 
+            progressFill.style.width = '100%';
+            
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+                leadForm.style.display = 'block';
+            }, 300);
+        }
+
+        function openModal(userName) {
+            modalMessage.innerText = `תודה ${userName}! התשובות שלך התקבלו והצוות שלנו יצור איתך קשר בקרוב.`;
+            modalOverlay.classList.add('active');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        // Validation Regex Functions
+        function isValidName(name) {
+            // Allows Hebrew letters, English letters, and spaces. Minimum 2 characters.
+            const nameRegex = /^[a-zA-Zא-ת\s]{2,}$/;
+            return nameRegex.test(name.trim());
+        }
+
+        function isValidEmail(email) {
+            // Standard email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email.trim());
+        }
+
+        function isValidPhone(phone) {
+            // Israeli Mobile Phone validation: starts with 05, optional dash, then 7 digits.
+            const phoneRegex = /^05\d-?\d{7}$/;
+            return phoneRegex.test(phone.trim());
+        }
+
+        // Show/Clear errors in the UI
+        function showError(fieldId) {
+            document.getElementById(fieldId).classList.add('invalid');
+            document.getElementById(`${fieldId}-error`).style.display = 'block';
+        }
+
+        function clearError(fieldId) {
+            document.getElementById(fieldId).classList.remove('invalid');
+            document.getElementById(`${fieldId}-error`).style.display = 'none';
+        }
+
+        async function submitForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const submitBtn = document.getElementById('submit-button');
+
+            let isValid = true;
+
+            // Run validations
+            if (!isValidName(name)) {
+                showError('name');
+                isValid = false;
+            }
+            if (!isValidEmail(email)) {
+                showError('email');
+                isValid = false;
+            }
+            if (!isValidPhone(phone)) {
+                showError('phone');
+                isValid = false;
+            }
+
+            // If any validation failed, stop the submission
+            if (!isValid) return;
+
+            // If valid, proceed with submission
+            submitBtn.disabled = true;
+            submitBtn.innerText = "שולח...";
+
+            const formattedAnswers = questions.map((q, index) => {
+                return {
+                    question: q.q.replace(/<[^>]*>?/gm, '').trim(),
+                    selectedOptions: userAnswers[index] || [] 
+                };
+            });
+
+            const payload = {
+                lead: { name, email, phone },
+                quizResults: formattedAnswers
+            };
+
+            const jsonPayload = JSON.stringify(payload, null, 2);
+            console.log("Ready to send this JSON:", jsonPayload);
+
+            setTimeout(() => {
+                openModal(name);
+                submitBtn.innerText = "נשלח!";
+            }, 800);
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
