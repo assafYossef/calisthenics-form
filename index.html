@@ -55,7 +55,7 @@
             border-radius: 50%;
         }
 
-        /* --- Image-Aware Splash Screen Animation --- */
+        /* --- ULTRA FAST Image-Aware Splash Screen Animation --- */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -67,7 +67,6 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            /* Animation is removed from here and triggered via JS class */
         }
 
         .splash-logo {
@@ -78,13 +77,15 @@
             opacity: 0; 
         }
 
-        /* These classes are injected by JS ONLY when the image is fully downloaded */
+        /* Triggered via JS when image loads */
         .splash-screen.start-anim {
-            animation: slideUpOut 0.6s cubic-bezier(0.8, 0, 0.2, 1) 1.0s forwards;
+            /* Waits 0.3s for the logo, then slides up in 0.2s */
+            animation: slideUpOut 0.2s cubic-bezier(0.8, 0, 0.2, 1) 0.3s forwards;
         }
 
         .splash-screen.start-anim .splash-logo {
-            animation: logoPulseReveal 0.8s ease-out forwards;
+            /* Logo appears incredibly fast (0.3s) */
+            animation: logoPulseReveal 0.3s ease-out forwards;
         }
 
         @keyframes logoPulseReveal {
@@ -485,31 +486,25 @@
     </div>
 
     <script>
-        // --- SMART IMAGE PRE-LOADER ---
+        // --- ULTRA FAST SMART IMAGE PRE-LOADER (0.5 Seconds Total) ---
         window.addEventListener('DOMContentLoaded', () => {
             const splashScreen = document.getElementById('splash-screen');
             const logoImg = document.getElementById('splash-logo-img');
             
             function triggerAnimation() {
-                // Kick off the CSS animations by adding this class
                 splashScreen.classList.add('start-anim');
                 
-                // Then remove the splash screen from DOM completely after 1.6 seconds
+                // Remove the splash screen from DOM perfectly at the 500ms mark
                 setTimeout(() => {
                     if (splashScreen) splashScreen.remove();
-                    document.body.style.overflow = 'auto'; // Re-enables scrolling
-                }, 1600);
+                    document.body.style.overflow = 'auto'; 
+                }, 500);
             }
 
-            // If the image is somehow already cached and loaded by the browser instantly
             if (logoImg.complete) {
                 triggerAnimation();
             } else {
-                // Otherwise, wait for the actual download to finish before animating
                 logoImg.addEventListener('load', triggerAnimation);
-                
-                // Fallback: If the user's internet drops and the image fails to load,
-                // trigger the animation anyway so they aren't trapped on a black screen forever
                 logoImg.addEventListener('error', triggerAnimation); 
             }
         });
