@@ -13,9 +13,8 @@
             --text-muted: #9e9e9e;        
             --accent-blue: #5c8ab8;       
             --accent-blue-hover: #6a9ccf; 
-            --accent-yellow: #dceb2a;     
-            --accent-yellow-hover: #eaf745;
-            --title-gold: #ffb800;        
+            --accent-gold: #ffb800;       /* Golden color for titles and selections */
+            --accent-gold-hover: #ffcc33; /* Slightly lighter gold for hover */
             --input-bg: #2b2b2b;          
             --border-radius: 8px;
         }
@@ -56,7 +55,7 @@
             border-radius: 50%;
         }
 
-        /* --- ADJUSTED: Balanced Splash Screen Animation --- */
+        /* --- Splash Screen Animation --- */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -175,10 +174,10 @@
 
         .progress-fill {
             height: 100%;
-            background-color: var(--accent-yellow);
+            background-color: var(--accent-gold);
             width: 0%;
             transition: width 0.4s ease;
-            box-shadow: 0 0 10px rgba(220, 235, 42, 0.4); 
+            box-shadow: 0 0 10px rgba(255, 184, 0, 0.3); /* Subtle gold glow */
         }
 
         /* Typography */
@@ -188,7 +187,7 @@
             font-size: 1.4rem;
             line-height: 1.4;
             font-weight: 700;
-            color: var(--title-gold); 
+            color: var(--accent-gold); /* Matched title to gold */
         }
 
         p.subtitle {
@@ -230,15 +229,16 @@
             background-color: rgba(51, 51, 51, 0.9);
         }
 
+        /* UPDATED: Selected options now use the Golden Title color */
         .option-btn.selected {
-            background-color: var(--accent-yellow);
-            border-color: var(--accent-yellow);
+            background-color: var(--accent-gold);
+            border-color: var(--accent-gold);
             color: #000000; 
             font-weight: bold;
         }
 
         .option-btn.selected:hover {
-            background-color: var(--accent-yellow-hover);
+            background-color: var(--accent-gold-hover);
         }
 
         /* Next Button */
@@ -378,7 +378,7 @@
         .modal-icon {
             width: 64px;
             height: 64px;
-            background-color: var(--accent-yellow);
+            background-color: var(--accent-gold); /* Matched icon to gold */
             color: #000000;
             border-radius: 50%;
             display: flex;
@@ -413,13 +413,16 @@
 </head>
 <body>
 
+    <!-- Splash Screen Overlay -->
     <div id="splash-screen" class="splash-screen">
         <img src="logo.png" alt="Logo" class="splash-logo">
     </div>
 
+    <!-- Permanent Watermark Logo Behind the Card -->
     <img src="logo.png" alt="Background Logo" class="bg-watermark">
 
     <div class="container">
+        <!-- Back Button Area -->
         <div class="nav-header">
             <button id="back-btn" class="back-btn" onclick="goBack()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -430,6 +433,7 @@
             </button>
         </div>
 
+        <!-- Progress Indicator -->
         <div id="progress-container">
             <div class="progress-header">
                 <span id="progress-text">שאלה 1 מתוך 7</span>
@@ -439,13 +443,17 @@
             </div>
         </div>
 
+        <!-- Question Section -->
         <div id="quiz-section">
             <h2 id="question-text">טוען שאלה...</h2>
             <div class="options-grid" id="options-container">
-                </div>
+                <!-- Buttons injected via JavaScript -->
+            </div>
+            <!-- Next Button -->
             <button id="next-btn" class="next-btn" onclick="goToNextQuestion()" disabled>המשך</button>
         </div>
 
+        <!-- Lead Capture Form -->
         <div id="lead-form">
             <h2>הכל מוכן!</h2>
             <p class="subtitle">השאר את הפרטים שלך למטה והמאמן הראשי שלנו יחזור אליך כדי לבנות את התוכנית המותאמת אישית שלך.</p>
@@ -466,6 +474,7 @@
         </div>
     </div>
 
+    <!-- Success Modal -->
     <div id="success-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-icon">
@@ -480,7 +489,6 @@
     </div>
 
     <script>
-        // --- Adjusted Splash Screen Removal (matches new 1.6s timing) ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
