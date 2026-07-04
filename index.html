@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תוכנית אימונים - קליסטניקס</title>
+    
+    <link rel="preload" as="image" href="logo.webp">
+
     <style>
         /* Extracted Theme */
         :root {
@@ -32,7 +35,7 @@
             
             /* Texture Background */
             background-color: var(--bg-color); 
-            background-image: url('logo.webp');
+            background-image: url('image_3e2d33.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -55,7 +58,7 @@
             border-radius: 50%;
         }
 
-        /* --- ULTRA FAST Image-Aware Splash Screen Animation --- */
+        /* --- SYNCHRONIZED SPLASH SCREEN WITH PROGRESS RING --- */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -69,23 +72,65 @@
             z-index: 9999;
         }
 
+        .splash-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .splash-logo {
-            width: 180px;
+            width: 160px; /* Slightly smaller than the wrapper to fit inside the ring */
             height: auto;
             border-radius: 50%; 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            opacity: 0; 
+            opacity: 0;
+            z-index: 2;
         }
 
-        /* Triggered via JS when image loads */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            z-index: 1;
+            transform: rotate(-90deg); /* Starts the circle at the very top (12 o'clock) */
+        }
+
+        .progress-ring__circle {
+            stroke: var(--accent-gold);
+            stroke-width: 6;
+            stroke-linecap: round;
+            fill: transparent;
+            /* Circumference of a circle with r=90 is ~565 */
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565; /* Starts completely hidden */
+        }
+
+        /* Triggers via JS once the tiny 15kb image is loaded */
         .splash-screen.start-anim {
-            /* Waits 0.3s for the logo, then slides up in 0.2s */
-            animation: slideUpOut 0.2s cubic-bezier(0.8, 0, 0.2, 1) 0.3s forwards;
+            /* Screen slides up after 1.6s total wait */
+            animation: slideUpOut 0.6s cubic-bezier(0.8, 0, 0.2, 1) 1.6s forwards;
         }
 
         .splash-screen.start-anim .splash-logo {
-            /* Logo appears incredibly fast (0.3s) */
-            animation: logoPulseReveal 0.3s ease-out forwards;
+            /* Logo appears in 0.6s */
+            animation: logoPulseReveal 0.6s ease-out forwards;
+        }
+
+        .splash-screen.start-anim .progress-ring__circle {
+            /* Ring delays for 0.4s, then takes 1.2s to draw itself. Finishes exactly at 1.6s */
+            animation: drawCircle 1.2s ease-in-out 0.4s forwards;
+        }
+
+        @keyframes drawCircle {
+            to {
+                stroke-dashoffset: 0;
+                filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6)); /* Adds a subtle glow as it finishes */
+            }
         }
 
         @keyframes logoPulseReveal {
@@ -420,7 +465,12 @@
 <body>
 
     <div id="splash-screen" class="splash-screen">
-        <img src="logo.webp" alt="Logo" id="splash-logo-img" class="splash-logo">
+        <div class="splash-wrapper">
+            <svg class="progress-ring" viewBox="0 0 200 200">
+                <circle class="progress-ring__circle" r="90" cx="100" cy="100"></circle>
+            </svg>
+            <img src="logo.webp" alt="Logo" id="splash-logo-img" class="splash-logo">
+        </div>
     </div>
 
     <img src="logo.webp" alt="Background Logo" class="bg-watermark">
@@ -486,7 +536,7 @@
     </div>
 
     <script>
-        // --- ULTRA FAST SMART IMAGE PRE-LOADER (0.5 Seconds Total) ---
+        // --- SMART IMAGE PRE-LOADER & ANIMATION CHOREOGRAPHY ---
         window.addEventListener('DOMContentLoaded', () => {
             const splashScreen = document.getElementById('splash-screen');
             const logoImg = document.getElementById('splash-logo-img');
@@ -494,11 +544,11 @@
             function triggerAnimation() {
                 splashScreen.classList.add('start-anim');
                 
-                // Remove the splash screen from DOM perfectly at the 500ms mark
+                // Matches the CSS duration: 1.6s wait + 0.6s slide = 2200ms total
                 setTimeout(() => {
                     if (splashScreen) splashScreen.remove();
                     document.body.style.overflow = 'auto'; 
-                }, 500);
+                }, 2200);
             }
 
             if (logoImg.complete) {
