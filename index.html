@@ -35,7 +35,7 @@
             
             /* Texture Background */
             background-color: var(--bg-color); 
-            background-image: url('logo.webp');
+            background-image: url('image_3e2d33.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -82,7 +82,7 @@
         }
 
         .splash-logo {
-            width: 160px; /* Slightly smaller than the wrapper to fit inside the ring */
+            width: 160px;
             height: auto;
             border-radius: 50%; 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
@@ -97,7 +97,7 @@
             width: 200px;
             height: 200px;
             z-index: 1;
-            transform: rotate(-90deg); /* Starts the circle at the very top (12 o'clock) */
+            transform: rotate(-90deg); 
         }
 
         .progress-ring__circle {
@@ -105,31 +105,26 @@
             stroke-width: 6;
             stroke-linecap: round;
             fill: transparent;
-            /* Circumference of a circle with r=90 is ~565 */
             stroke-dasharray: 565;
-            stroke-dashoffset: 565; /* Starts completely hidden */
+            stroke-dashoffset: 565; 
         }
 
-        /* Triggers via JS once the tiny 15kb image is loaded */
         .splash-screen.start-anim {
-            /* Screen slides up after 1.6s total wait */
             animation: slideUpOut 0.6s cubic-bezier(0.8, 0, 0.2, 1) 1.6s forwards;
         }
 
         .splash-screen.start-anim .splash-logo {
-            /* Logo appears in 0.6s */
             animation: logoPulseReveal 0.6s ease-out forwards;
         }
 
         .splash-screen.start-anim .progress-ring__circle {
-            /* Ring delays for 0.4s, then takes 1.2s to draw itself. Finishes exactly at 1.6s */
             animation: drawCircle 1.2s ease-in-out 0.4s forwards;
         }
 
         @keyframes drawCircle {
             to {
                 stroke-dashoffset: 0;
-                filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6)); /* Adds a subtle glow as it finishes */
+                filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6)); 
             }
         }
 
@@ -174,7 +169,6 @@
             border: 1px solid rgba(255, 255, 255, 0.05); 
         }
 
-        /* Navigation Controls */
         .nav-header {
             height: 24px;
             margin-bottom: 15px;
@@ -205,7 +199,6 @@
             transform: scaleX(-1);
         }
 
-        /* Progress Bar Styles */
         .progress-header {
             display: flex;
             justify-content: space-between;
@@ -232,7 +225,6 @@
             box-shadow: 0 0 10px rgba(255, 184, 0, 0.3); 
         }
 
-        /* Typography */
         h2 {
             margin-top: 0;
             margin-bottom: 25px;
@@ -256,7 +248,6 @@
             font-weight: normal;
         }
 
-        /* Question Options */
         .options-grid {
             display: flex;
             flex-direction: column;
@@ -292,7 +283,6 @@
             background-color: var(--accent-gold-hover);
         }
 
-        /* Next Button */
         .next-btn {
             width: 100%;
             padding: 16px;
@@ -319,7 +309,6 @@
             border: 1px solid rgba(68, 68, 68, 0.5);
         }
 
-        /* Lead Capture Form */
         #lead-form {
             display: none;
         }
@@ -347,7 +336,6 @@
             border-color: var(--accent-blue);
         }
 
-        /* Validation Error Styles */
         .input-group input.invalid {
             border-color: #ff4757; 
         }
@@ -386,7 +374,6 @@
             border: 1px solid rgba(68, 68, 68, 0.5);
         }
 
-        /* Success Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -508,7 +495,7 @@
             
             <div class="input-group">
                 <input type="text" id="name" placeholder="שם מלא" oninput="clearError('name')">
-                <div id="name-error" class="error-message">אנא הזן שם תקין (לפחות 2 אותיות).</div>
+                <div id="name-error" class="error-message">אנא הזן שם תקין .</div>
             </div>
             <div class="input-group">
                 <input type="email" id="email" placeholder="כתובת אימייל" oninput="clearError('email')" dir="ltr" style="text-align: right;">
@@ -516,7 +503,7 @@
             </div>
             <div class="input-group">
                 <input type="tel" id="phone" placeholder="מספר טלפון (נייד)" oninput="clearError('phone')" dir="ltr" style="text-align: right;">
-                <div id="phone-error" class="error-message">אנא הזן מספר נייד תקין (לדוגמה: 0501234567).</div>
+                <div id="phone-error" class="error-message">אנא הזן מספר נייד תקין </div>
             </div>
             <button id="submit-button" class="submit-btn" onclick="submitForm()">שלח וקבל תוכנית</button>
         </div>
@@ -536,15 +523,12 @@
     </div>
 
     <script>
-        // --- SMART IMAGE PRE-LOADER & ANIMATION CHOREOGRAPHY ---
         window.addEventListener('DOMContentLoaded', () => {
             const splashScreen = document.getElementById('splash-screen');
             const logoImg = document.getElementById('splash-logo-img');
             
             function triggerAnimation() {
                 splashScreen.classList.add('start-anim');
-                
-                // Matches the CSS duration: 1.6s wait + 0.6s slide = 2200ms total
                 setTimeout(() => {
                     if (splashScreen) splashScreen.remove();
                     document.body.style.overflow = 'auto'; 
@@ -558,7 +542,6 @@
                 logoImg.addEventListener('error', triggerAnimation); 
             }
         });
-        // ------------------------------
 
         const questions = [
             { 
@@ -785,6 +768,7 @@
             document.getElementById(`${fieldId}-error`).style.display = 'none';
         }
 
+        // --- NEW: FETCH API INTEGRATION ---
         async function submitForm() {
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
@@ -818,18 +802,38 @@
                 };
             });
 
+            // The exact JSON payload 
             const payload = {
                 lead: { name, email, phone },
                 quizResults: formattedAnswers
             };
 
-            const jsonPayload = JSON.stringify(payload, null, 2);
-            console.log("Ready to send this JSON:", jsonPayload);
+            const jsonPayload = JSON.stringify(payload);
+            console.log("Sending JSON Payload:", payload);
 
-            setTimeout(() => {
+            // Google Apps Script Web App URL
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycby86pJfUMKPTCipAZVVOkPMJeGx1ESG9eXoOvYn54tyDKIdf9ul6fVixSdewMMbuuvl/exec';
+
+            try {
+                // Using 'text/plain' to avoid Google Apps Script CORS preflight errors
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', 
+                    },
+                    body: jsonPayload
+                });
+
+                // Google Apps script with no-cors or redirect will succeed here
                 openModal(name);
                 submitBtn.innerText = "נשלח!";
-            }, 800);
+                
+            } catch (error) {
+                console.error("Error sending data:", error);
+                alert("אירעה שגיאה בשליחת הנתונים. אנא ודא שהאינטרנט מחובר ונסה שוב.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "שלח וקבל תוכנית";
+            }
         }
 
         renderQuestion();
