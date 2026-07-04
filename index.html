@@ -22,6 +22,14 @@
             --border-radius: 8px;
         }
 
+        /* Basic Reset for Iframes */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text-main);
@@ -29,9 +37,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
             box-sizing: border-box;
+            padding: 20px;
             
             /* Texture Background */
             background-color: var(--bg-color); 
@@ -43,6 +50,11 @@
             
             /* Prevent scrolling while splash screen is active */
             overflow: hidden; 
+        }
+
+        /* Ensure all elements respect padding constraints */
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         /* --- Watermark Logo Behind the Card --- */
@@ -129,29 +141,14 @@
         }
 
         @keyframes logoPulseReveal {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         @keyframes slideUpOut {
-            0% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100%);
-                opacity: 0;
-                visibility: hidden;
-            }
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100%); opacity: 0; visibility: hidden; }
         }
         /* ----------------------------------- */
 
@@ -447,6 +444,30 @@
             background-color: #333;
             border-color: var(--text-muted);
         }
+
+        /* --- NEW: MOBILE RESPONSIVE TWEAKS --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Reduce outer padding */
+            }
+            .container {
+                padding: 25px 20px; /* Slim down the inner padding */
+            }
+            h2 {
+                font-size: 1.25rem; /* Slightly smaller headings */
+                margin-bottom: 20px;
+            }
+            .option-btn {
+                padding: 14px 15px; /* Tighter button padding */
+                font-size: 0.95rem;
+            }
+            .bg-watermark {
+                width: 250px; /* Smaller background logo */
+            }
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -495,7 +516,7 @@
             
             <div class="input-group">
                 <input type="text" id="name" placeholder="שם מלא" oninput="clearError('name')">
-                <div id="name-error" class="error-message">אנא הזן שם תקין .</div>
+                <div id="name-error" class="error-message">אנא הזן שם תקין (לפחות 2 אותיות).</div>
             </div>
             <div class="input-group">
                 <input type="email" id="email" placeholder="כתובת אימייל" oninput="clearError('email')" dir="ltr" style="text-align: right;">
@@ -503,7 +524,7 @@
             </div>
             <div class="input-group">
                 <input type="tel" id="phone" placeholder="מספר טלפון (נייד)" oninput="clearError('phone')" dir="ltr" style="text-align: right;">
-                <div id="phone-error" class="error-message">אנא הזן מספר נייד תקין </div>
+                <div id="phone-error" class="error-message">אנא הזן מספר נייד תקין (לדוגמה: 0501234567).</div>
             </div>
             <button id="submit-button" class="submit-btn" onclick="submitForm()">שלח וקבל תוכנית</button>
         </div>
@@ -768,7 +789,6 @@
             document.getElementById(`${fieldId}-error`).style.display = 'none';
         }
 
-        // --- NEW: FETCH API INTEGRATION ---
         async function submitForm() {
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
@@ -802,7 +822,6 @@
                 };
             });
 
-            // The exact JSON payload 
             const payload = {
                 lead: { name, email, phone },
                 quizResults: formattedAnswers
@@ -815,7 +834,6 @@
             const scriptUrl = 'https://script.google.com/macros/s/AKfycby86pJfUMKPTCipAZVVOkPMJeGx1ESG9eXoOvYn54tyDKIdf9ul6fVixSdewMMbuuvl/exec';
 
             try {
-                // Using 'text/plain' to avoid Google Apps Script CORS preflight errors
                 const response = await fetch(scriptUrl, {
                     method: 'POST',
                     headers: {
@@ -824,7 +842,6 @@
                     body: jsonPayload
                 });
 
-                // Google Apps script with no-cors or redirect will succeed here
                 openModal(name);
                 submitBtn.innerText = "נשלח!";
                 
